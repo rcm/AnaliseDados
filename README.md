@@ -15,3 +15,4 @@ Horário:
 - Usar a opção do R (Packages -> Install packages)
 ## Pacotes a instalar
 - tidyverse
+- rpart.plot
