@@ -16,3 +16,6 @@ Horário:
 ## Pacotes a instalar
 - tidyverse
 - rpart.plot
+
+# Bibliografia
+- [R for Data Science](https://r4ds.had.co.nz/index.html)
