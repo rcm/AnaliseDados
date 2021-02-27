@@ -1,5 +1,8 @@
 # Analise de Dados
+- 19 de Março das 9 às 13
+- 20 de Março das 10 às 12
 
+Horário: 
 ## Ir buscar o R
 1. Ir a https://www.r-project.org/
 1. Escolher o mirror
