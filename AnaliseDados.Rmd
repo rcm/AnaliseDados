@@ -1,0 +1,51 @@
+---
+title: "Análise de Dados"
+author: "Rui Mendes"
+date: "28/02/2021"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+```
+
+## Tidyverse
+Temos que importar o módulo *Tidyverse*
+
+```{r, echo = TRUE}
+library(tidyverse)
+```
+
+## Dataset que vamos utilizar neste exemplo
+```{r, echo = TRUE}
+mpg
+```
+
+
+## Que atributos tem o dataset?
+
+```{r, echo = TRUE}
+mpg %>% names
+```
+
+## Selecionar atributos
+
+```{r select, echo = TRUE}
+mpg %>% select(year, cyl, cty, hwy, drv, fl)
+```
+
+## Selecionar linhas e atributos
+
+```{r, echo = TRUE}
+mpg %>% select(year, cyl, cty, hwy, drv, fl) %>% filter(cyl == 6)
+```
+
+## Agrupamentos
+Autonomia por cilindrada na auto-estrada
+
+```{r, echo = TRUE}
+mpg %>%
+  group_by(cyl) %>%
+  summarize(media = mean(hwy), contagem = n(), .groups = "keep")
+```
