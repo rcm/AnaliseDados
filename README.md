@@ -14,6 +14,8 @@ Horário:
 - Configurar o mirror (Packages -> Set mirror)
 - Usar o comando *install.packages* ou
 - Usar a opção do R (Packages -> Install packages)
+## Cheat sheets
+- https://rstudio.com/resources/cheatsheets/
 ## Pacotes a instalar
 - tidyverse
 - rpart.plot
