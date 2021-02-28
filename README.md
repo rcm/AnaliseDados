@@ -26,6 +26,9 @@ Horário:
 - count
 - Sobre tibbles
   - filter
+  - group_by
+  - mutate
+  - summarise
 
 # Bibliografia
 - [R for Data Science](https://r4ds.had.co.nz/index.html)
