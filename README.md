@@ -15,7 +15,15 @@ Horário:
 - Usar o comando *install.packages* ou
 - Usar a opção do R (Packages -> Install packages)
 ## Cheat sheets
-- https://rstudio.com/resources/cheatsheets/
+Eis o URL: https://rstudio.com/resources/cheatsheets/
+
+Eis as cheat sheets mais interessantes:
+- Data Import Cheatsheet
+- Data Transformation Cheatsheet
+- Data Visualization Cheatsheet
+- Apply Functions Cheatsheet
+- R Markdown Cheatsheet
+- RStudio IDE Cheatsheet
 ## Pacotes a instalar
 - tidyverse
 - rpart.plot
