@@ -32,6 +32,7 @@ Eis as cheat sheets mais interessantes:
 - head
 - summary
 - count
+- select
 - Sobre tibbles
   - filter
   - group_by
