@@ -2,6 +2,9 @@
 .Rhistory
 .Rapp.history
 
+# Presentation generated from R markdown
+*.html
+
 # Session Data files
 .RData
 

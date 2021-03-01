@@ -5,8 +5,70 @@ date: "28/02/2021"
 output: ioslides_presentation
 ---
 
+## Horário:
+- 19 de Março das 9 às 13
+- 20 de Março das 10 às 12
+
+## Aulas e avaliação
+
+- Metodologia TBL
+- Trabalho em grupo
+- Avaliação de pares
+  - *intra*-grupo
+  - *extra*-grupo
+- Projeto
+  - Escolher um dataset
+  - Analisar o dataset
+  - Produzir uma apresentação de análise do dataset
+
+## Sugestões de datasets
+
+- [Eurostat](https://cran.r-project.org/web/packages/eurostat/index.html)
+- [Covid-19](https://github.com/CSSEGISandData)
+- [FluMOMO](https://www.euromomo.eu/how-it-works/flumomo/)
+- [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php)
+
+## Ir buscar o R
+1. Ir a https://www.r-project.org/
+1. Escolher o mirror
+2. Escolher o sistema operativo
+3. Ir buscar o base
+4. Instalar
+
+## Como instalar pacotes no R
+- Configurar o mirror (Packages -> Set mirror)
+- Usar o comando *install.packages* ou
+- Usar a opção do R (Packages -> Install packages)
+
+## Cheat sheets
+Eis o URL: https://rstudio.com/resources/cheatsheets/
+
+- Data Import Cheatsheet
+- Data Transformation Cheatsheet
+- Data Visualization Cheatsheet
+- Apply Functions Cheatsheet
+- R Markdown Cheatsheet
+- RStudio IDE Cheatsheet
+
+## Pacotes a instalar
+- tidyverse
+- rpart.plot
+
+## Funções interessantes para analisar dados
+- head
+- summary
+- count
+- select
+- Sobre tibbles
+  - filter
+  - group_by
+  - mutate
+  - summarise
+
+
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, comment = NA)
 library(tidyverse)
 ```
 
@@ -17,35 +79,100 @@ Temos que importar o módulo *Tidyverse*
 library(tidyverse)
 ```
 
+- Instala bastantes pacotes
+- Possui muitas funções interessantes para a análise de dados
+
 ## Dataset que vamos utilizar neste exemplo
-```{r, echo = TRUE}
+```{r}
 mpg
 ```
 
 
 ## Que atributos tem o dataset?
 
-```{r, echo = TRUE}
+```{r}
 mpg %>% names
 ```
 
 ## Selecionar atributos
 
-```{r select, echo = TRUE}
+```{r}
 mpg %>% select(year, cyl, cty, hwy, drv, fl)
 ```
 
 ## Selecionar linhas e atributos
 
-```{r, echo = TRUE}
+```{r}
 mpg %>% select(year, cyl, cty, hwy, drv, fl) %>% filter(cyl == 6)
 ```
 
 ## Agrupamentos
-Autonomia por cilindrada na auto-estrada
+Autonomia por tipo de combustível e cilindrada na auto-estrada
 
-```{r, echo = TRUE}
-mpg %>%
-  group_by(cyl) %>%
+```{r}
+mpg %>% group_by(fl, cyl) %>%
   summarize(media = mean(hwy), contagem = n(), .groups = "keep")
 ```
+
+## COVID em Portugal
+
+```
+url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
+read_csv(url) %>% filter(`Country/Region` == "Portugal") %>%
+  pivot_longer(matches("\\d+/\\d+/\\d+"), values_to = "confirmados") %>%
+  mutate(across(name, ~parse_datetime(.x, "%m/%d/%y"))) %>%
+  ggplot(aes(x = name, y = confirmados)) + geom_line() + labs(x = "Data")
+```
+
+## COVID em Portugal
+
+```{r, echo = FALSE, message = FALSE}
+url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
+read_csv(url) %>% filter(`Country/Region` == "Portugal") %>%
+  pivot_longer(matches("\\d+/\\d+/\\d+"), values_to = "Confirmados") %>%
+  mutate(across(name, ~parse_datetime(.x, "%m/%d/%y"))) %>%
+  ggplot(aes(x = name, y = Confirmados)) + geom_line() + labs(x = "Data")
+```
+
+## COVID em Portugal
+
+```{r, echo = FALSE, message = FALSE}
+url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
+read_csv(url) %>% filter(`Country/Region` == "Portugal") %>%
+  pivot_longer(matches("\\d+/\\d+/\\d+"), values_to = "Mortos") %>%
+  mutate(across(name, ~parse_datetime(.x, "%m/%d/%y"))) %>%
+  ggplot(aes(x = name, y = Mortos)) + geom_line() + labs(x = "Data")
+```
+
+## COVID
+
+```{r, echo = FALSE, message = FALSE}
+url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
+read_csv(url) %>% group_by(`Country/Region`) %>% summarize(across(matches("\\d+/\\d+/\\d+"), sum)) %>%
+  filter(`Country/Region` == "France" | `Country/Region` == "Spain" | `Country/Region` == "Portugal" | `Country/Region` == "Italy") %>%
+  pivot_longer(matches("\\d+/\\d+/\\d+"), values_to = "Mortos") %>%
+  mutate(across(name, ~parse_datetime(.x, "%m/%d/%y"))) %>%
+  ggplot(aes(x = name, y = Mortos, color = `Country/Region`)) + geom_line() + labs(x = "Data")
+```
+
+## COVID
+
+```{r, echo = FALSE, message = FALSE}
+url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
+read_csv(url) %>% group_by(`Country/Region`) %>% summarize(across(matches("\\d+/\\d+/\\d+"), sum)) %>%
+  filter(`Country/Region` == "France" | `Country/Region` == "Spain" | `Country/Region` == "Portugal" | `Country/Region` == "Italy") %>%
+  pivot_longer(matches("\\d+/\\d+/\\d+"), values_to = "Mortos") %>%
+  mutate(across(name, ~parse_datetime(.x, "%m/%d/%y"))) %>%
+  ggplot(aes(x = name, y = Mortos, color = `Country/Region`, shape = `Country/Region`)) + geom_point() + labs(x = "Data") + facet_wrap(vars(`Country/Region`))
+```
+
+## PCA
+```{r, message = FALSE}
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv"
+read_delim(url, delim=";") %>%
+  prcomp(center = TRUE, scale = TRUE) %>%
+  summary
+```
+
+## Bibliografia
+- [R for Data Science](https://r4ds.had.co.nz/index.html)
