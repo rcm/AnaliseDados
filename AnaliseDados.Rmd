@@ -2,8 +2,18 @@
 title: "Análise de Dados"
 author: "Rui Mendes"
 date: "28/02/2021"
-output: ioslides_presentation
+output:
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, comment = NA)
+library(tidyverse)
+library(factoextra)
+library(rpart.plot)
+```
 
 ## Horário:
 - 19 de Março das 9 às 13
@@ -20,6 +30,7 @@ output: ioslides_presentation
   - Escolher um dataset
   - Analisar o dataset
   - Produzir uma apresentação de análise do dataset
+  - Colocar num projeto Github
 
 ## Sugestões de datasets
 
@@ -67,10 +78,7 @@ Eis o URL: https://rstudio.com/resources/cheatsheets/
 
 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, comment = NA)
-library(tidyverse)
-```
+
 
 ## Tidyverse
 Temos que importar o módulo *Tidyverse*
@@ -166,13 +174,79 @@ read_csv(url) %>% group_by(`Country/Region`) %>% summarize(across(matches("\\d+/
   ggplot(aes(x = name, y = Mortos, color = `Country/Region`, shape = `Country/Region`)) + geom_point() + labs(x = "Data") + facet_wrap(vars(`Country/Region`))
 ```
 
-## PCA
+
+##  Wisconsin Diagnostic Breast Cancer (WDBC)
+- 32 campos
+- id
+- diagnosis
+- 10 medidas com 3 valores:
+  - mean
+  - standard error
+  - worst
+  
+## WDBC medidas  
+- radius (mean of distances from center to points on the perimeter)
+- texture (standard deviation of gray-scale values)
+- perimeter
+- area
+- smoothness (local variation in radius lengths)
+- compactness (perimeter^2 / area - 1.0)
+- concavity (severity of concave portions of the contour)
+- concave points (number of concave portions of the contour)
+- symmetry 
+- fractal dimension ("coastline approximation" - 1)
+
+## WDBC
 ```{r, message = FALSE}
-url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv"
-read_delim(url, delim=";") %>%
-  prcomp(center = TRUE, scale = TRUE) %>%
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data"
+flds = strsplit("radius texture perimeter area smoothness compactness
+  concavity conv_pts symmetry fract_dim", "\\s+") %>% unlist
+wdbc = read_csv(url) %>% set_names(c("id", "diagnosis",
+  paste0(flds, "_mean"), paste0(flds, "_se"), paste0(flds, "_worst")))
+wdbc %>% head
+```
+
+## WDBC PCA
+```{r}
+wdbc %>% select(radius_mean:fract_dim_worst) %>% prcomp(center = TRUE, scale = TRUE) %>%
   summary
 ```
+
+## WDBC PCA
+```{r}
+wdbc %>% select(radius_mean:fract_dim_worst) %>% prcomp(center = TRUE, scale = TRUE) %>%
+  screeplot(type="l", npcs=15)
+```
+
+## PCA
+```{r, echo = FALSE, message = FALSE}
+wdbc %>% select(radius_mean:fract_dim_worst) %>% prcomp(center = TRUE, scale = TRUE) %>%
+  fviz_pca_ind(geom.ind = "point", pointshape = 21,
+               pointsize = 2,
+               fill.ind = as.character(wdbc$diagnosis),
+               col.ind = "black",
+               palette = "jco",
+               addEllipses = TRUE,
+               label = "var",
+               col.var = "black",
+               repel = TRUE,
+               legend.title = "Diagnosis")
+```
+
+## Wine Quality
+```{r, message = FALSE}
+wine_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv"
+wine = read_delim(wine_url, delim=";")
+wine %>% summary
+```
+
+## Wine Quality
+```{r, message = FALSE}
+wine %>% pivot_longer(cols = everything()) %>%
+  group_by(name) %>% summarise_all(lst(min, mean, median, max))
+```
+
+
 
 ## Bibliografia
 - [R for Data Science](https://r4ds.had.co.nz/index.html)
