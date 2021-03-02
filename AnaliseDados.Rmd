@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, comment = NA)
 library(tidyverse)
 library(factoextra)
-library(rpart.plot)
+library(broom)
 ```
 
 ## Horário:
@@ -45,6 +45,7 @@ library(rpart.plot)
 2. Escolher o sistema operativo
 3. Ir buscar o base
 4. Instalar
+5. Ir buscar o RStudio
 
 ## Como instalar pacotes no R
 - Configurar o mirror (Packages -> Set mirror)
@@ -63,7 +64,8 @@ Eis o URL: https://rstudio.com/resources/cheatsheets/
 
 ## Pacotes a instalar
 - tidyverse
-- rpart.plot
+- broom
+- factoextra
 
 ## Funções interessantes para analisar dados
 - head
@@ -208,14 +210,21 @@ wdbc %>% head
 
 ## WDBC PCA
 ```{r}
-wdbc %>% select(radius_mean:fract_dim_worst) %>% prcomp(center = TRUE, scale = TRUE) %>%
-  summary
+wdbc_pca = wdbc %>% nest(data=everything()) %>% 
+  mutate(pca = map(data, ~ prcomp(.x %>% select(-id, -diagnosis), 
+                                  center = TRUE, scale = TRUE)),
+         pca_aug = map2(pca, data, ~augment(.x, data = .y)))
+wdbc_pca
 ```
 
 ## WDBC PCA
 ```{r}
-wdbc %>% select(radius_mean:fract_dim_worst) %>% prcomp(center = TRUE, scale = TRUE) %>%
-  screeplot(type="l", npcs=15)
+var_exp = wdbc_pca %>% unnest(pca_aug) %>% summarize(across(matches("PC\\d+"), var)) %>%
+  gather(key = pc, value = variance) %>% 
+  mutate(var_exp = variance/sum(variance),
+         cum_var_exp = cumsum(var_exp),
+         pc = str_replace(pc, ".fitted", ""))
+var_exp
 ```
 
 ## PCA
