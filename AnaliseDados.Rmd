@@ -242,6 +242,24 @@ wdbc %>% select(radius_mean:fract_dim_worst) %>% prcomp(center = TRUE, scale = T
                legend.title = "Diagnosis")
 ```
 
+## PCA
+```{r, echo = FALSE, message = FALSE}
+var_exp %>% 
+  rename(
+    `Variancia Explicada` = var_exp,
+    `Variancia Cumulativa` = cum_var_exp
+  ) %>% mutate(pc = gsub("PC(\\d)$", "PC0\\1", pc, fixed = FALSE)) %>%
+  gather(key = key, value = value, `Variancia Explicada`:`Variancia Cumulativa`) %>% 
+  ggplot(aes(pc, value, group = key)) + 
+  geom_point() + 
+  geom_line() + 
+  facet_wrap(~key, scales = "free_y") +
+  theme_bw() +
+  lims(y = c(0, 1)) +
+  labs(y = "Variance",
+       title = "Variancia explicada por cada componente principal")
+```
+
 ## Wine Quality
 ```{r, message = FALSE}
 wine_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv"
