@@ -4,7 +4,7 @@ author: "Rui Mendes"
 date: "28/02/2021"
 output:
   ioslides_presentation:
-    widescreen: true
+    widescreen: false
     smaller: true
 ---
 
@@ -19,6 +19,9 @@ library(broom)
 - 19 de Março das 9 às 13
 - 20 de Março das 10 às 12
 
+## Material desta apresentação
+https://github.com/rcm/AnaliseDados
+
 ## Aulas e avaliação
 
 - Metodologia TBL
@@ -29,8 +32,8 @@ library(broom)
 - Projeto
   - Escolher um dataset
   - Analisar o dataset
-  - Produzir uma apresentação de análise do dataset
-  - Colocar num projeto Github
+  - Produzir uma apresentação com a análise do dataset
+  - Colocar no [padlet](https://padlet.com/ruicmendes/AnaliseDados)
 
 ## Sugestões de datasets
 
@@ -62,21 +65,20 @@ Eis o URL: https://rstudio.com/resources/cheatsheets/
 - R Markdown Cheatsheet
 - RStudio IDE Cheatsheet
 
-## Pacotes a instalar
+## Pacotes utilizados nesta apresentação
 - tidyverse
 - broom
 - factoextra
 
-## Funções interessantes para analisar dados
+## Funções para analisar dados
 - head
 - summary
 - count
 - select
-- Sobre tibbles
-  - filter
-  - group_by
-  - mutate
-  - summarise
+- filter
+- group_by
+- mutate
+- summarise
 
 
 
@@ -92,16 +94,55 @@ library(tidyverse)
 - Instala bastantes pacotes
 - Possui muitas funções interessantes para a análise de dados
 
-## Dataset que vamos utilizar neste exemplo
+## Dataset utilizado neste exemplo
 ```{r}
 mpg
 ```
 
+## Conceito de pipeline
+- Utiliza o operador %>%
+- Redireciona o resultado de um comando para o primeiro argumento do comando seguinte
+
+```{r}
+x = 2
+f = function(x, y) x + y
+x %>% f(7)
+```
 
 ## Que atributos tem o dataset?
 
 ```{r}
 mpg %>% names
+```
+
+## Que tipos de transmissão há?
+```{r}
+mpg %>% count(trans)
+```
+
+## Que tipos de transmissão há?
+```{r}
+mpg %>% ggplot(aes(trans)) + geom_bar()
+```
+
+## Média na cidade
+```{r}
+mpg %>% count(cut_width(cty, 5))
+```
+
+## Média na cidade
+```{r}
+mpg %>% ggplot + geom_histogram(mapping = aes(cty), binwidth = 5)
+```
+
+## Média na cidade consoante o nº de cilindros
+```{r}
+mpg %>% ggplot(aes(x = cty, colour = as.factor(cyl))) + geom_freqpoly(binwidth=5)
+```
+
+## Média na cidade consoante o nº de cilindros
+```{r}
+mpg %>% ggplot(aes(x = cty, y = as.factor(cyl))) + geom_boxplot()
 ```
 
 ## Selecionar atributos
@@ -114,6 +155,14 @@ mpg %>% select(year, cyl, cty, hwy, drv, fl)
 
 ```{r}
 mpg %>% select(year, cyl, cty, hwy, drv, fl) %>% filter(cyl == 6)
+```
+
+## Selecionar linhas e atributos e ordenar
+
+```{r}
+mpg %>% select(year, cyl, cty, hwy, drv, fl) %>% filter(cyl == 6) %>%
+  arrange(cty)
+
 ```
 
 ## Agrupamentos
@@ -229,21 +278,6 @@ var_exp
 
 ## PCA
 ```{r, echo = FALSE, message = FALSE}
-wdbc %>% select(radius_mean:fract_dim_worst) %>% prcomp(center = TRUE, scale = TRUE) %>%
-  fviz_pca_ind(geom.ind = "point", pointshape = 21,
-               pointsize = 2,
-               fill.ind = as.character(wdbc$diagnosis),
-               col.ind = "black",
-               palette = "jco",
-               addEllipses = TRUE,
-               label = "var",
-               col.var = "black",
-               repel = TRUE,
-               legend.title = "Diagnosis")
-```
-
-## PCA
-```{r, echo = FALSE, message = FALSE}
 var_exp %>% 
   rename(
     `Variancia Explicada` = var_exp,
@@ -259,6 +293,22 @@ var_exp %>%
   labs(y = "Variance",
        title = "Variancia explicada por cada componente principal")
 ```
+
+## PCA
+```{r, echo = FALSE, message = FALSE}
+wdbc %>% select(radius_mean:fract_dim_worst) %>% prcomp(center = TRUE, scale = TRUE) %>%
+  fviz_pca_ind(geom.ind = "point", pointshape = 21,
+               pointsize = 2,
+               fill.ind = as.character(wdbc$diagnosis),
+               col.ind = "black",
+               palette = "jco",
+               addEllipses = TRUE,
+               label = "var",
+               col.var = "black",
+               repel = TRUE,
+               legend.title = "Diagnosis")
+```
+
 
 ## Wine Quality
 ```{r, message = FALSE}
