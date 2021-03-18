@@ -91,7 +91,7 @@ Temos que importar o módulo *Tidyverse*
 library(tidyverse)
 ```
 
-- Instala bastantes pacotes
+- Importa bastantes pacotes
 - Possui muitas funções interessantes para a análise de dados
 
 ## Dataset utilizado neste exemplo
@@ -118,6 +118,11 @@ mpg %>% names
 ## Que tipos de transmissão há?
 ```{r}
 mpg %>% count(trans)
+```
+
+## Que tipos de transmissão há?
+```{r}
+knitr::kable(mpg %>% count(trans) %>% head)
 ```
 
 ## Que tipos de transmissão há?
